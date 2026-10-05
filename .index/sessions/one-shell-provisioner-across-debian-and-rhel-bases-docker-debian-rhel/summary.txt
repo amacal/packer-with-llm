@@ -1,0 +1,1 @@
+Built untagged Docker images from ubuntu:24.04 and rockylinux:9 in parallel from one build block with two docker sources, sharing an unscoped shell provisioner and using only-scoped apt and dnf provisioners, verified by running four independently built images and querying dpkg/rpm

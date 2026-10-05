@@ -1,0 +1,44 @@
+date: "2026-10-05"
+title: "One Shell Provisioner Across Debian and RHEL Bases (docker, debian+rhel)"
+session:
+  file: docker/hello-multi-os/
+  status: completed
+  attempted:
+    - "Build Docker images from ubuntu:24.04 and rockylinux:9 in one build block, sharing an OS-agnostic provisioner that writes /tmp/hello.txt and using per-source provisioners to install tree with apt or dnf, then verify each artifact"
+  explored:
+    - "Recapped what each entry in a build block's sources list produces (its own pull, container, provisioning and commit)"
+    - "Predicted the effect of running the unchanged apt-get provisioner on rockylinux:9 under /bin/sh -e"
+    - "Compared dnf and rpm, and apt-get and dpkg, as repository-resolving versus local-package tools"
+    - "Observed with docker run that ubuntu:24.04 ships an empty /var/lib/apt/lists"
+    - "Fetched the provisioner docs excerpt for only/except and compared the reference format with the sources list"
+    - "Compared template-side only scoping with a runtime if/else on /etc/os-release, using a hypothetical alpine:3.20 source with no matching provisioner"
+    - "Reasoned through provisioner declaration order for an OS-agnostic step that depends on tree"
+    - "Compared Wait completed time against the sum of the two build durations as evidence of parallel execution"
+    - "Discussed why the build name prefixes each build in the log"
+  tried:
+    - "Wrote main.pkr.hcl with sources docker.ubuntu and docker.rocky, an unscoped echo provisioner first and two only-scoped install provisioners"
+    - "Ran a deliberate failure build with the Rocky line changed to dnf install -y treee: Ubuntu committed sha256:0ed5b3ea..., Rocky errored with 'Script exited with non-zero exit status: 1', packer build exited 1"
+    - "Restored tree and ran two clean builds of the final template"
+  corrections:
+    - "Predicted the build log prefixes would be docker.ubuntu and docker.rocky; observed hello-image.docker.ubuntu and hello-image.docker.rocky, because the build block's name is prepended"
+    - "First stated Rocky would need 'dnf or rpm'; restated that only dnf resolves packages from repositories, rpm installs or queries local package files"
+    - "First explained apt-get update as a general two-stage apt process; restated after observing an empty /var/lib/apt/lists in ubuntu:24.04 that the image ships with its package index stripped to save size"
+    - "First stated only limits provisioners to one family of machines; restated that only matches source names (docker.ubuntu), not OS families"
+    - "First answered that an uncovered source with only scoping would fail at build time; restated after tracing it that the build succeeds and the gap never shows in the log or exit code"
+    - "First attributed stopping on an explicit exit 1 to sh -e; restated that Packer fails the build on the script's non-zero exit status, and -e turns an unexpected command failure into that exit"
+    - "First predicted the artifacts would be 'tagged twice with pure id'; restated that both are untagged images identified only by sha256 ID"
+    - "First attributed differing image IDs to container IDs in the committed layer; restated as varying dnf/rpm database and cache files plus the commit's creation time"
+  bugs_found: —
+  completed:
+    - "Wrote docker/hello-multi-os/main.pkr.hcl with two docker sources (ubuntu:24.04, rockylinux:9) and only-scoped apt and dnf provisioners"
+    - "packer validate and packer fmt -check both pass on the final template"
+    - "Build 1: ubuntu sha256:e6ed279c..., rocky sha256:008cf853...; Wait completed after 34.9 s with builds of about 18 s and 34.9 s"
+    - "Build 2: ubuntu sha256:97b57b17..., rocky sha256:f4a4439a..., exit 0"
+    - "Verified all four images with docker run: os-release ID ubuntu/rocky, /tmp/hello.txt prints 'Hello, World!', tree v2.1.1 with dpkg -s status 'install ok installed' on ubuntu, tree v1.8.0 with rpm -q 'tree-1.8.0-10.el9.x86_64' on rocky"
+    - "Answered the three-level depth check (observable behavior, internal mechanism, design rationale)"
+  not_completed: —
+  open_questions: —
+  notes:
+    - "The plan agent ran rockylinux:9 before the session's builds, pulling it into the local cache, so build 1 logged 'Image is up to date' for it"
+    - "The build block keeps the name hello-image, the same name used in docker/hello-image/"
+    - "The /tmp/hello.txt result is still docker-only evidence (now on a RHEL base too); the qemu boot question remains open"

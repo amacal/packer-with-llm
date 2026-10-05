@@ -1,5 +1,4 @@
-continuation:
-  - "One Shell Provisioner Across Debian and RHEL Bases (docker, debian+rhel) was named as the follow-up to the first docker session"
+continuation: —
 consolidation: —
 new_branch:
   - "A first qemu build would open the docker-versus-qemu comparison axis, including the open /tmp-across-boot question"

@@ -4,3 +4,7 @@
 - "write-shell-provisioner"
 - "validate-and-fmt-template"
 - "verify-docker-artifact-with-run"
+- "write-multiple-sources-in-one-build"
+- "scope-provisioner-with-only"
+- "read-parallel-build-log"
+- "verify-package-via-native-db"
