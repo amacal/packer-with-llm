@@ -1,0 +1,8 @@
+- "hcl2-template-structure"
+- "plugins"
+- "required-plugins"
+- "docker-builder"
+- "provisioners"
+- "shell-provisioner"
+- "packer-validate-and-fmt"
+- "build-verification"

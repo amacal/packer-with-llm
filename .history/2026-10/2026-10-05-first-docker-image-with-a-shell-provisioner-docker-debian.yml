@@ -1,0 +1,47 @@
+date: "2026-10-05"
+title: "First Docker Image with a Shell Provisioner (docker, debian)"
+session:
+  file: docker/hello-image/
+  status: completed
+  attempted:
+    - "Build a Docker image from ubuntu:24.04 with the docker builder and an inline shell provisioner that writes /tmp/hello.txt and installs tree, then verify both claims by running the artifact"
+  explored:
+    - "Distinguished a Docker image's read-only layers from a container's writable layer, and what docker commit does with the latter"
+    - "Compared the docker builder's commit, export_path and discard options from the fetched builder docs"
+    - "Compared a minimum version constraint (>=) with an exact pin in required_plugins"
+    - "Compared base image references by tag, release tag and digest for drift between builds"
+    - "Checked with docker run that ubuntu:24.04 runs as root and ships empty apt package lists"
+    - "Reasoned through a failing inline command under /bin/sh -e and whether a partial image is committed"
+    - "Discussed why /tmp/hello.txt survives the commit on docker and whether it would on a booted qemu image"
+    - "Discussed why the sources list in a build block allows one provisioner to run against several sources"
+  tried:
+    - "Ran packer init without a directory argument (printed usage), then packer init ."
+    - "Ran packer validate with only a packer block and a source block, then with a build block added but commit missing"
+    - "Placed commit in the build block, then moved it to the source block"
+    - "Placed inline directly in the build block, then wrapped it in provisioner \"shell\""
+    - "Hand-aligned the build block arguments, then corrected after packer fmt -check -diff"
+    - "Ran packer build twice on the unchanged template"
+  corrections:
+    - "Predicted packer init would create a project-local .packer/ directory (by analogy with terraform init); observed the plugin installed in the per-user store ~/.config/packer/plugins/github.com/hashicorp/docker/ with nothing written to the exercise directory"
+    - "Predicted packer validate would fail on the missing commit option; observed 'Missing build block' first, and the commit error only after a build block referenced the source"
+    - "Predicted build 1 would skip the pull step because ubuntu:24.04 was cached (an earlier assistant confirmation of 'cached image means no re-pull' was also wrong); observed a pull step reporting 'Image is up to date', since the builder's pull option defaults to true and the registry is consulted on every build"
+    - "Considered that build 2 might reuse build 1's result like a Docker build cache; observed a new container, a new commit and a different image ID, with both images remaining"
+  bugs_found:
+    - "required_plugins initially kept the docs placeholder name happycloud (copied from the docs example), first with the placeholder source and version, then with only the local name left unchanged; resolved by renaming to docker"
+    - "commit placed in the build block gave 'An argument named \"commit\" is not expected here'; resolved by moving it into source \"docker\" \"hello\""
+    - "inline placed directly in the build block gave 'An argument named \"inline\" is not expected here'; resolved by wrapping it in provisioner \"shell\""
+    - "packer fmt -check failed (exit 3) on manual alignment of name in the build block; resolved by removing the extra spaces"
+  completed:
+    - "Wrote docker/hello-image/main.pkr.hcl with the docker plugin pinned to 1.1.4, source docker.hello (ubuntu:24.04, commit = true) and a build with an inline shell provisioner"
+    - "packer validate and packer fmt -check both pass on the final template"
+    - "Built the image twice independently: sha256:2e9ebb162ca8... and sha256:ca0758a933e6..."
+    - "Verified both images with docker run: /tmp/hello.txt prints 'Hello, World!' and tree --version prints tree v2.1.1"
+  not_completed:
+    - "The export_path artifact (a tar file and what is needed to run it) was explicitly deferred"
+    - "The docker-tag post-processor was named as the way to tag the artifact but not implemented"
+  open_questions:
+    - "Would a file written to /tmp by a provisioner still be present after a qemu-built disk image boots standalone"
+  notes:
+    - "Base image is ubuntu:24.04 (Debian family); the base tag was deliberately left unpinned for this exercise"
+    - "Running docker run ubuntu:24.04 before build 1 pulled the base image into the local cache"
+    - "'One Shell Provisioner Across Debian and RHEL Bases (docker, debian+rhel)' was named as a follow-up session building on this one, and the /tmp behaviour was named as a seed for a later docker-versus-qemu comparison"

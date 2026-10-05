@@ -1,0 +1,6 @@
+title: "One Shell Provisioner Across Debian and RHEL Bases (docker, debian+rhel)"
+status: not-completed
+mentioned_by:
+  - "First Docker Image with a Shell Provisioner (docker, debian)"
+evidence:
+  - ".history/2026-10/2026-10-05-first-docker-image-with-a-shell-provisioner-docker-debian.yml notes"

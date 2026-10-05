@@ -1,0 +1,1 @@
+Built an untagged Docker image from ubuntu:24.04 with the docker builder (plugin pinned to 1.1.4, commit = true) and an inline shell provisioner writing /tmp/hello.txt and installing tree, verified by running two independently built images

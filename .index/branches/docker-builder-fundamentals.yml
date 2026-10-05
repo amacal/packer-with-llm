@@ -1,0 +1,7 @@
+title: "Docker Builder Fundamentals"
+sessions:
+  - "First Docker Image with a Shell Provisioner (docker, debian)"
+frontier:
+  - "First Docker Image with a Shell Provisioner (docker, debian)"
+explicit_future_targets:
+  - "One Shell Provisioner Across Debian and RHEL Bases (docker, debian+rhel)"
