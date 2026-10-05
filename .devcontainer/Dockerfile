@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl git ripgrep jq tzdata \
     qemu-system-x86 qemu-utils ovmf \
     && rm -rf /var/lib/apt/lists/* \
+    && (getent group kvm || groupadd kvm) \
     && usermod -aG kvm vscode
 
 RUN mkdir -p /etc/apt/keyrings \
