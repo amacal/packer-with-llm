@@ -205,3 +205,4 @@ validation:
     - "every branches/*.yml's sessions and frontier entries resolve to a real sessions/*/meta.yml title"
     - "every concepts.yml/capabilities.yml tag matches ^[a-z0-9]+(-[a-z0-9]+)*$"
     - "meta.yml's target field is one of qemu | docker | amazon-ebs | hcloud, and matches the target implied by the file field's directory prefix"
+    - "every .yml file is well-formed YAML: a file whose entire content is the empty marker is checked by Grep for exactly the single line `—` (minimal YAML parsers reject a bare top-level scalar, so it is never fed to one); every other file is parsed with whatever YAML parser the container has (no python3/ruby is guaranteed — Perl's CPAN::Meta::YAML is the fallback)"
