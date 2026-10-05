@@ -14,12 +14,14 @@ succeeds but you cannot explain why is a failure.
 
 ## Target environments
 
-- **QEMU (local)** — builds a real bootable disk image. Works everywhere by
-  default via software emulation (slow but unconditional); a one-time
-  devcontainer rebuild with KVM passthrough speeds it up on a host that
-  supports nested virtualization, same opt-in pattern as any other local
-  acceleration — never required, never silently assumed. No credentials
-  needed. Directory: `qemu/`.
+- **QEMU (local)** — builds a real bootable disk image. KVM passthrough is
+  already committed in `.devcontainer/devcontainer.json` and confirmed
+  working on this host (`--accel kvm` actually initializes, not just a
+  readable device file) — builds run accelerated, not in slow software
+  emulation. That's a portability tradeoff, same as `ansible-with-llm`'s
+  `vagrant-local`: this devcontainer won't start on a host without
+  `/dev/kvm` until that `runArgs` line is removed. No credentials needed.
+  Directory: `qemu/`.
 - **Docker (local, Docker-outside-of-Docker)** — builds a Docker image
   (commits a container's filesystem as a reusable image) rather than a
   bootable disk image. Faster than `qemu` for iterating on templating and
