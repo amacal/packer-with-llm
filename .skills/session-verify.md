@@ -18,7 +18,7 @@ Your prompt should already include the write agent's report: every file it wrote
 3. **Math formatting.** All math in `$$...$$` on its own line (rare here — only flag if one actually appears and is formatted wrong).
 4. **Formula framing.** Every `$$` block needs a preceding sentence (why) and a following sentence (what it means). Flag any missing either.
 5. **Paragraph length.** Flag standalone one-sentence paragraphs not attached to a neighbor.
-6. **Word count.** `wc -w`. Flag if outside 600–1400 without an explicit justification in Overview or Design rationale.
+6. **Word count.** `wc -w`. Flag if outside 600–1400 unless Overview or Design rationale explicitly invokes one of CLAUDE.md's two documented exceptions (synthesis of several prior concepts → longer; thin retarget to a new build target → shorter) and the session actually fits it. A justification naming any other reason is itself a violation.
 7. **Worked example.** Non-trivial (not degenerate), mentally verifiable under a minute, entirely prose (no bulleted trace), concrete template fields/variable values/artifact state.
 8. **Citation vs. re-derivation.** A concept covered in a prior session's notes must be cited by filename, not re-derived. Flag any full re-derivation of a previously-covered result.
 9. **No personal data.** Flag names, emails, or other personal information.
