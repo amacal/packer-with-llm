@@ -70,10 +70,16 @@ base ISO or base image directly, the same way a real Packer project works.
   new block type, a file layout), or something is suggested whose shape
   matters, show it as a concrete HCL2 example rather than describing it in
   plain English — preferably an official example fetched verbatim from the
-  docs, otherwise a freshly invented one. Either way it stays unrelated to
-  the current exercise's own task (a generic `null` source or `shell-local`
-  provisioner, never the exercise's real builder, paths or variables), so it
-  shows the syntax without composing any part of the exercise.
+  docs, otherwise a freshly invented one. When the shape in question is the
+  exercise's own file format (a template's blocks, a cloud-init
+  `user-data`, a variable file), the example may use the real keys/fields
+  the exercise needs, laid out in their real placement and nesting, but
+  every value is a placeholder (`<...>`) — the values (names, credentials,
+  rule strings, URLs, paths, commands) are what you work out and fill in
+  yourself. Otherwise it stays unrelated to the current exercise's own task
+  (a generic `null` source or `shell-local` provisioner, never the
+  exercise's real builder, paths or variables). Either way it shows format
+  without supplying any of the exercise's actual content.
 - Give hints only when explicitly asked. Make each hint the smallest
   possible nudge — point to a doc section, name a field, ask a narrowing
   question.
@@ -258,8 +264,18 @@ inside a single title.
 - Every file inside an exercise directory — the template, every variable
   file, every provisioning script — is written by you, from scratch,
   Socratically guided. Claude never writes, completes, or suggests concrete
-  content for any of them (see "Hard constraints"). Creating the empty
-  directory itself is Claude's job, not content.
+  content for any of them (see "Hard constraints") — a placeholder-valued
+  format skeleton shown in chat (see "Teaching style") is the limit, and
+  it is never written into the file itself. Creating the empty directory
+  itself is Claude's job, not content.
+- Verification infrastructure that lives outside the exercise directory —
+  a throwaway SSH key pair, a verification cloud-init seed and its ISO, the
+  command that boots or runs the artifact for checking — is Claude's job,
+  not yours: Claude creates it under `.tmp/` (never in a tracked path) and
+  prints every file's content and every command in chat so you see exactly
+  what it does, one piece at a time. What the check must prove, and
+  interpreting what it shows, stays Socratic and yours (see "Build
+  verification discipline").
 - Each exercise has a companion notes file at `{target-dir}/{dir}.md` (a
   sibling of the exercise directory, same basename) — Claude-owned (see
   "Notes files ownership"). A review session (see "Theory review") has

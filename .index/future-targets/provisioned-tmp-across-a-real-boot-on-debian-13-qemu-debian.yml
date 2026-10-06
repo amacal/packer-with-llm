@@ -1,0 +1,6 @@
+title: "Provisioned /tmp Across a Real Boot on Debian 13 (qemu, debian)"
+status: not-completed
+mentioned_by:
+  - "Provisioned /tmp Persistence Across a Real Boot (qemu, debian)"
+evidence:
+  - ".history/2026-10/2026-10-05-provisioned-tmp-persistence-across-a-real-boot-qemu-debian.yml not_completed"

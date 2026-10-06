@@ -1,0 +1,5 @@
+title: "Provisioned /tmp Persistence Across a Real Boot (qemu, debian)"
+kind: implementation
+target: qemu
+file: qemu/hello-image/
+date: "2026-10-05"

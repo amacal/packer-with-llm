@@ -1,0 +1,64 @@
+date: "2026-10-05"
+title: "Provisioned /tmp Persistence Across a Real Boot (qemu, debian)"
+session:
+  file: qemu/hello-image/
+  status: completed
+  attempted:
+    - "Build a Debian 12 qcow2 with the qemu builder from the genericcloud base image, run the docker sessions' /tmp/hello.txt and tree provisioning step, and check whether /tmp/hello.txt survives the artifact's standalone boot"
+  explored:
+    - "Recapped the docker baseline: the container never boots and cat was PID 1, so nothing touched /tmp before the check"
+    - "Listed three possible /tmp outcomes on a booting system (untouched, emptied by systemd-tmpfiles, tmpfs mounted) and distinguished shadowed from deleted"
+    - "Reasoned that a tmpfs mounted at build time would hold provisioned bytes in guest RAM so they never reach the qcow2"
+    - "Compared an installer ISO with a prebuilt cloud image (disk_image = true) and chose the cloud image"
+    - "Compared cd_files with http_content for delivering the cloud-init seed and chose cd_files"
+    - "Discussed whether a committed build password is a secret; settled on making it unusable in the artifact (password lock plus password authentication off)"
+    - "Compared removing versus locking the build account and the effect on sudo in shutdown_command"
+    - "Discussed console and su logins bypassing sshd_config"
+    - "Explored cloud-init instance-id first-boot semantics for a verification-time seed"
+    - "Distinguished build access (build seed) from image content (provisioner) when placing the guest account"
+    - "Observed output_directory and cd_files resolving relative to the current directory rather than the template's directory; path.root was named but not used"
+    - "Discussed why the qemu builder refuses an existing output directory and what -force does"
+    - "Compared apt output '5 not upgraded' with '6 not upgraded' across builds as unpinned-package drift"
+    - "Discussed committing a real public key against the no-personal-data rule; a comment-free public key was committed as a deliberate design choice"
+  tried:
+    - "Pinned a fixed SHA512 with a latest/ base URL, then switched to the dated 20260923-2610 directory"
+    - "Logged in as root/root before switching to a dedicated packer build user"
+    - "Added a grep of /etc/ssh in a provisioner to find which file held PasswordAuthentication"
+    - "Generated a throwaway ed25519 key and built a verification seed ISO with a new instance-id under .tmp/; not used after the decision to bake a key"
+    - "Considered injecting the ssh-agent's first public key via a PKR_VAR_ input variable; deferred"
+    - "Ran packer build with -force over an existing output directory, and once after deleting it"
+  corrections:
+    - "Predicted /tmp would be a tmpfs on the booted artifact with hello.txt shadowed; observed findmnt /tmp empty and hello.txt absent, deleted by systemd-tmpfiles applying 'D /tmp' with --remove at boot"
+    - "Predicted the first build would fail at step 4 on apt-get; observed it failing at VM start because QEMU's default -display gtk was unavailable; after adding headless = true the prediction held (Hello, World! printed, apt-get Permission denied, exit 100)"
+    - "Predicted packer validate would pass without SSH settings; observed 'An ssh_username must be specified' from the qemu plugin's config check"
+    - "Predicted an artifact of a few GB; observed 1.31 GiB on disk and 40 GiB virtual size"
+    - "Stated that removing cloud-init's PasswordAuthentication line would fall back to the compiled default yes; observed the base sshd_config sets PasswordAuthentication no, read after the included sshd_config.d drop-in, with the first obtained value winning"
+  bugs_found:
+    - "required_plugins named the qemu plugin docker; resolved by renaming the local name to qemu"
+    - "Base image given as source = instead of iso_url, and disk_image missing; resolved"
+    - "Dated-directory URL returned 404 because the filename carries a date suffix; resolved with the full dated filename"
+    - "ssh_username root rejected by PermitRootLogin prohibit-password; resolved with a dedicated packer user"
+    - "ssh_pwauth nested inside the user entry instead of top-level; resolved"
+    - "meta-data held a bare value without an instance-id key; resolved"
+    - "cd_files and cd_label missing from the source; resolved"
+    - "shutdown_command placed in the provisioner, then execute_command placed in the source ('not expected here'); resolved by putting each in its own block"
+    - "useradd -mus parsed -u as taking a UID argument; resolved with -mUs"
+    - "install for authorized_keys given one operand, then -d created a directory; resolved by installing from /dev/null"
+  completed:
+    - "Wrote qemu/hello-image/main.pkr.hcl, user-data and meta-data building output-hello/packer-hello (qcow2, 40 GiB virtual, 1.31 GiB on disk) from Debian 12 genericcloud 20260923-2610"
+    - "packer validate and packer fmt -check pass on the final template"
+    - "Built the final template twice independently, the second from a deleted output directory without -force; both artifacts were 1402667008 bytes"
+    - "Booted both artifacts with -snapshot and verified: findmnt /tmp empty, /tmp/hello.txt absent, tree v2.1.0, guest key login works, password-only SSH as packer refused with publickey only, su packer fails"
+    - "Traced the deletion to /usr/lib/tmpfiles.d/tmp.conf 'D /tmp 1777 root root -' and systemd-tmpfiles-setup.service running --create --remove --boot"
+  not_completed:
+    - "Replacing the deletion of 50-cloud-init.conf with an own sshd drop-in sorted earlier (e.g. 01-local.conf with PasswordAuthentication no) was deferred"
+    - "Baking an agent-supplied public key via an HCL2 input variable instead of hardcoding it was deferred"
+    - "The Debian 13 (trixie) contrast, where the plan agent found a 'q /tmp ... 10d' rule and a shipped tmp.mount, was not done"
+  open_questions:
+    - "Is hello.txt actually present inside the qcow2 before first boot? Inferred from the graceful halt and -snapshot, not observed; offline inspection needs /dev/nbd*, which this container lacks"
+    - "Why is the 1.31 GiB artifact roughly four times the 333 MiB base image?"
+  notes:
+    - "CLAUDE.md was edited this session: Teaching style allows a chat format skeleton with real keys and placeholder values; Exercise files makes verification infrastructure under .tmp/ Claude's job, printed in chat"
+    - "xorriso was added to .devcontainer/Dockerfile and installed ad hoc in the running container"
+    - "Debian 12 genericcloud amd64 base from the dated directory 20260923-2610; qemu plugin pinned to 1.1.7"
+    - "The build password packer/packer is committed in user-data and the template by decision, made unusable in the artifact by the cleanup provisioner"

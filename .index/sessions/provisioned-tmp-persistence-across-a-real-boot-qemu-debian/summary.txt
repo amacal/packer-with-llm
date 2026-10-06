@@ -1,0 +1,1 @@
+Built a Debian 12 genericcloud qcow2 with the qemu builder (cloud-init NoCloud CD seed, SSH as a sudo build user, execute_command/shutdown_command, build-credential cleanup, a baked key-only guest account) and verified across two builds that /tmp/hello.txt is deleted on the artifact's first standalone boot by systemd-tmpfiles' D /tmp rule

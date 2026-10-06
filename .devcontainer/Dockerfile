@@ -3,7 +3,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl git ripgrep jq tzdata \
-    qemu-system-x86 qemu-utils ovmf \
+    qemu-system-x86 qemu-utils ovmf xorriso \
     && rm -rf /var/lib/apt/lists/* \
     && (getent group kvm >/dev/null && groupmod -g 104 kvm || groupadd -g 104 kvm) \
     && usermod -aG kvm vscode
