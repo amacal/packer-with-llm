@@ -18,8 +18,8 @@ succeeds but you cannot explain why is a failure.
   already committed in `.devcontainer/devcontainer.json` and confirmed
   working on this host (`--accel kvm` actually initializes, not just a
   readable device file) — builds run accelerated, not in slow software
-  emulation. That's a portability tradeoff, same as `ansible-with-llm`'s
-  `vagrant-local`: this devcontainer won't start on a host without
+  emulation. That's a portability tradeoff, same as a configuration-management
+  repo's local-VM target: this devcontainer won't start on a host without
   `/dev/kvm` until that `runArgs` line is removed. No credentials needed.
   Directory: `qemu/`.
 - **Docker (local, Docker-outside-of-Docker)** — builds a Docker image
@@ -62,10 +62,9 @@ base ISO or base image directly, the same way a real Packer project works.
   the full page, never composed template content. The excerpt is quoted
   verbatim from what was actually fetched that moment, never reworded or
   invented from memory; any explanation goes outside the quote. This
-  depends on live internet access during the session — unlike
-  `ansible-doc` in `ansible-with-llm`, Packer ships no bundled offline doc
-  tool, so if the fetch fails, say so rather than filling the gap from
-  memory.
+  depends on live internet access during the session — unlike Ansible's
+  `ansible-doc`, Packer ships no bundled offline doc tool, so if the fetch
+  fails, say so rather than filling the gap from memory.
 - When new syntax comes up (an HCL2 construct like `dynamic`/`for_each`, a
   new block type, a file layout), or something is suggested whose shape
   matters, show it as a concrete HCL2 example rather than describing it in
@@ -167,9 +166,9 @@ every implementation session, before it can close:
    with the right content) — never just "the build succeeded."
 
 This is part of what makes an exercise closeable (see "Session closing
-ritual"), the same way math-with-llm/hard-with-llm require passing tests and
-ansible-with-llm requires a verified-idempotent second run before closing —
-never deferred to "later," never skipped because the first build looked
+ritual"), the same way a from-scratch implementation repo requires passing
+tests and a configuration-management repo requires a verified-idempotent
+second run before closing — never deferred to "later," never skipped because the first build looked
 fine.
 
 ## Cross-target comparison
@@ -721,9 +720,9 @@ decision.
 - HCL2 fundamentals: `variable`/`local` blocks, expressions, string
   interpolation, `required_plugins`.
 - Builders/sources: `qemu`, `docker`, cloud builders once active.
-- Provisioners: `shell`, `file`, `ansible` (ties back to
-  `ansible-with-llm`'s own skills when both repos are in play), others as
-  they come up.
+- Provisioners: `shell`, `file`, `ansible` (ties back to a sibling
+  Ansible-focused repo's own skills when one is in play), others as they
+  come up.
 - Post-processors: checksum, compress, `vagrant`, artifact registries.
 - Parallel/matrix builds: multiple `source` blocks in one `build` block.
 - Plugin architecture: `packer init`, versioned `required_plugins`.
@@ -744,7 +743,7 @@ decision.
   — write every template from scratch. Official builder/provisioner/
   post-processor *types* are the primitives this repo is built from — using
   them is expected, the same way `std` is fine in a from-scratch Rust repo,
-  or a builtin Ansible module in `ansible-with-llm`. A pre-built template
+  or a builtin Ansible module in an Ansible repo. A pre-built template
   that does the whole job is not.
 - Every exercise's template passes `packer validate` and `packer fmt
   -check` before it can close.
