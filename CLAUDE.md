@@ -330,6 +330,9 @@ inside a single title.
   `.index/`.
 - No personal data anywhere in the repo, including `.history/`: observable
   facts only, never personality/psychological/subjective-ability judgments.
+  A comment-free SSH public key you deliberately choose to bake into an
+  exercise is not personal data in this sense; notes and `.history/` still
+  describe it rather than reproduce it.
 - Dev-container environment — do not rely on Claude's auto-memory (files
   outside the repo, e.g. `~/.claude/projects/.../memory/`) for anything
   load-bearing; the container can be rebuilt and that state isn't guaranteed
@@ -750,7 +753,12 @@ decision.
   it can close.
 - No plaintext secrets, ever. A real credential is supplied only as an
   environment variable at invocation time — never hardcoded in a template,
-  never written into a tracked `.pkrvars.hcl`/`.auto.pkrvars.hcl` file.
+  never written into a tracked `.pkrvars.hcl`/`.auto.pkrvars.hcl` file. A
+  throwaway build-only credential (e.g. the password Packer's communicator
+  uses to reach a local build VM) is not a secret in this sense, provided
+  the template itself makes it unusable in the artifact (account locked,
+  password auth disabled) and the build verification proves that on the
+  booted artifact.
 - Every exercise needs a way to verify the artifact actually did what it
   claims — an explicit boot/run-and-check step walked through Socratically,
   not just "the build succeeded."
