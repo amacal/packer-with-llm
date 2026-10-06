@@ -10,3 +10,7 @@
 - "configure-graceful-shutdown"
 - "lock-build-credentials"
 - "boot-qcow2-for-verification"
+- "declare-required-variable"
+- "validate-variable-input"
+- "supply-variable-at-invocation"
+- "pass-value-via-env-var-file"

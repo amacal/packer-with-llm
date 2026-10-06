@@ -1,0 +1,7 @@
+- "declare-required-variable"
+- "validate-variable-input"
+- "supply-variable-at-invocation"
+- "pass-value-via-env-var-file"
+- "trace-shell-quoting-through-execute-command"
+- "drive-packer-from-makefile"
+- "verify-per-invocation-artifact-content"

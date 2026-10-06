@@ -1,0 +1,57 @@
+date: "2026-10-06"
+title: "Agent-Supplied SSH Key via an Input Variable (qemu, debian)"
+session:
+  file: qemu/hello-key-var/
+  status: completed
+  attempted:
+    - "Replace the hardcoded guest public key of the qemu/debian artifact with an HCL2 input variable supplied at build time from the invoking user's ssh-agent, and verify the artifact authorizes exactly the supplied key"
+  explored:
+    - "Discussed what a hardcoded key fixes about every artifact built from a template versus a value supplied per invocation"
+    - "Decided default versus no default for the key variable"
+    - "Distinguished HCL2 ${...} interpolation (template evaluation) from the shell provisioner's {{ .Path }}/{{ .Vars }} fields (provisioner run time)"
+    - "Compared -var, -var-file, *.auto.pkrvars.hcl and PKR_VAR_ against the docs' precedence list and chose -var from a Makefile; rejected a tracked .pkrvars.hcl"
+    - "Traced how a ' in an interpolated value breaks out of a quoted inline shell line"
+    - "Traced the default env_var_format through the custom execute_command sudo sh -c '{{ .Vars }} {{ .Path }}' by hand and found sh -c receives only an assignment and exits 0"
+    - "Considered passing the key as sh -c positional parameters; ruled out because {{ .Vars }} is pre-formatted text, not the raw key"
+    - "Checked ssh-add -L output with no reachable agent (stderr message, empty stdout, exit 2) and that an empty -var value counts as set"
+    - "Decided on a validation regex, against sensitive, and to strip the key comment in the Makefile"
+    - "Discussed what -force deletes and when, and that packer validate runs builder configuration checks including the output directory"
+  tried:
+    - "Declared the variable with required = true"
+    - "Makefile assigned the key with $(...) instead of $(shell ...)"
+    - "execute_command sourced the env file in the packer user's shell before calling sudo sh -c on the script"
+    - "Rebuilt with output-hello present, then added --force to the Makefile build target"
+    - "Added --force to the Makefile validate target, then rm -rf hello-image, then rm -rf output-hello"
+    - "Supplied key 2 for one build by overriding SSH_PUBLIC_KEY on the make command line"
+    - "Added an in-build 'cat authorized_keys | wc -l' line to the second provisioner"
+  corrections:
+    - "Predicted packer validate would pass with required = true and the variable unset; observed 'Unsupported argument' for required and an invalid error_message sentence"
+    - "Predicted $(...) in the Makefile would run the pipeline in a shell; observed make -n showing ssh_public_key= empty, because $(...) is a Make variable reference"
+    - "Predicted -var ssh_public_key= would pass validation; observed the validation rule rejecting it with its error_message"
+    - "Predicted an unreferenced variable without a default would not be checked; observed 'Unset variable' from packer validate on a template that never references it"
+    - "Predicted echo 'ab'cd 'x y'z passes 4 arguments; observed 2 (abcd and 'x yz'), since adjacent quoted and unquoted pieces join and only unquoted whitespace splits"
+    - "Predicted the first build would put key 1 in authorized_keys; observed the build finishing successfully but key 1 refused, traced to sudo env_reset dropping SSH_PUBLIC_KEY so echo wrote an empty line"
+    - "Predicted a rebuild with output-hello present would succeed; observed Packer refusing because the output directory exists"
+    - "Expected make validate to pass with output-hello present; observed the output-directory error, then 'flag provided but not defined: -force', then rm -rf hello-image targeting a nonexistent directory"
+  bugs_found:
+    - "required = true is not a valid variable argument; resolved by removing it (no default already makes the variable required)"
+    - "error_message did not start with an uppercase letter; resolved by rewriting it as a full sentence"
+    - "Makefile used $(...) instead of $(shell ...), passing an empty key; resolved"
+    - "execute_command sourced the env file outside sudo, so the root shell lacked SSH_PUBLIC_KEY and authorized_keys got an empty line while the build reported success; resolved by sourcing inside sudo sh -c"
+    - "packer validate given --force, which it does not accept; resolved by removing the output directory in the Makefile instead"
+    - "Makefile removed hello-image (the build name) instead of output-hello; resolved"
+    - "packer fmt -check failed on type alignment left after removing required; resolved with packer fmt"
+  completed:
+    - "Wrote qemu/hello-key-var/main.pkr.hcl, Makefile, user-data and meta-data; the template declares ssh_public_key (string, no default, validation can(regex(\"^ssh-\", ...))) and passes it via environment_vars with use_env_var_file"
+    - "packer fmt -check and packer validate pass on the final template"
+    - "Built four times: key 1 with the broken execute_command (key 1 refused), key 1 after the fix (key 1 accepted, authorized_keys one comment-free line, key 2 refused, password-only SSH as packer refused with publickey only), and the final template twice, once with key 2 and once with key 1"
+    - "Booted each final-template artifact with -snapshot: the key-2 artifact accepted key 2 and refused key 1, the key-1 artifact accepted key 1 and refused key 2"
+  not_completed:
+    - "A Makefile guard failing loudly on an empty ssh-agent result was deliberately not added; the template's validation rule is the only guard"
+  open_questions:
+    - "Does Packer escape a single quote inside an environment_vars value when writing the use_env_var_file env file?"
+  notes:
+    - "The qemu source, first and third provisioners, user-data and meta-data were carried over from qemu/hello-image with minimal changes"
+    - "First Makefile in the repo; it strips the agent key's comment with cut -d' ' -f1,2"
+    - "The two final-template builds ran with the Makefile's build target using --force; the Makefile was changed afterwards to rm -rf output-hello without --force, with the template unchanged"
+    - "Verification public keys were extracted from the ssh-agent into .tmp/agent-key-1.pub and .tmp/agent-key-2.pub"

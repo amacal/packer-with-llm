@@ -1,0 +1,5 @@
+title: "Agent-Supplied SSH Key via an Input Variable (qemu, debian)"
+kind: implementation
+target: qemu
+file: qemu/hello-key-var/
+date: "2026-10-06"

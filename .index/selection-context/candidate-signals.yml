@@ -1,5 +1,5 @@
 continuation:
-  - "The first qemu session left three named follow-ups: an owned sshd drop-in, an agent-supplied key via an input variable, and the Debian 13 /tmp contrast"
+  - "The first qemu session's remaining named follow-ups are an owned sshd drop-in and the Debian 13 /tmp contrast; the agent-supplied key follow-up is done"
 consolidation: —
 new_branch: —
 explicit_commitment: —

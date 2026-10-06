@@ -1,0 +1,1 @@
+Replaced the qemu/debian artifact's hardcoded guest public key with a required, validated HCL2 input variable supplied via -var from a Makefile reading the ssh-agent, passed into a root shell through the shell provisioner's env var file, and verified across two builds with different keys that each artifact authorizes only the key it was given
