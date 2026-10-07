@@ -1,0 +1,46 @@
+date: "2026-10-07"
+title: "Provisioned /tmp Across a Real Boot on Debian 13 (qemu, debian)"
+session:
+  file: qemu/hello-tmp-trixie/
+  status: completed
+  attempted:
+    - "Build a Debian 13 (trixie) genericcloud qcow2 with the qemu builder, write /tmp/hello.txt and install tree in a shell provisioner, and determine whether hello.txt reaches the artifact's disk"
+  explored:
+    - "Recapped the Debian 12 result: systemd-tmpfiles-setup applying 'D /tmp' with --remove at the artifact's boot"
+    - "Introduced tmpfs and a mount hiding the underlying directory with a /srv/data example"
+    - "Compared bookworm's 'D /tmp 1777 root root -' with trixie's 'q /tmp 1777 root root 10d' using tmpfiles.d(5) text fetched live from manpages.debian.org"
+    - "Traced trixie's tmp.mount, enabled by the local-fs.target.wants vendor symlink, as active during the build boot as well as the artifact boot"
+    - "Used the on-disk /tmp directory's mtime as evidence that no entry was ever added or removed"
+    - "Used the tree install as a control showing the provisioner wrote to persistent disk"
+    - "Design what-if: masking tmp.mount would still leave 'q ... 10d' with systemd-tmpfiles-clean.timer, deleting a build-time file shortly after a late first boot because its age counts from the build"
+    - "Noted the shell provisioner's uploaded script also lands in guest /tmp (remote_folder default), hence in tmpfs"
+  tried:
+    - "Placed findmnt /tmp in the first provisioner before the write, as a build-log diagnostic"
+    - "First verification boot used plain -nic user and came up with only lo; rebooted with -nic user,model=virtio-net-pci"
+    - "Verified by unmounting /tmp in the booted artifact and listing the on-disk directory"
+  corrections:
+    - "Described the Debian 12 cleanup as 'something cleaning up /tmp at boot'; restated as systemd-tmpfiles-setup applying a 'D /tmp' rule at boot"
+    - "Gave 'because /tmp will be a subvolume' as the reason the q rule does not delete hello.txt; corrected to: the root is ext4, so q falls back to v and then d, and d lacks D's --remove emptying, leaving only --clean age cleanup"
+    - "Stated the credential lock must run last because of sudo; corrected to: NOPASSWD sudo does not use the password, while SSH password login on any reconnect does"
+    - "Reported validate and fmt -check as passing after a run in a different directory; in qemu/hello-tmp-trixie/ validate failed with 'Unset variable \"ssh_public_key\"' and fmt -check exited 3"
+    - "Output directory naming was left unpredicted; chat attributed the observed output-hello-tmp-trixie to build.name, but the template sets output_directory explicitly, so the default naming was not exercised"
+    - "Described the qcow2 as 'not containing /tmp, just an empty location'; restated as the base image's empty drwxrwxrwt /tmp directory carried over unchanged"
+    - "Described the tree install as the provisioner having 'committed' the image; restated as tree written to the VM's disk, with the graceful halt and Packer's conversion producing the qcow2"
+  bugs_found:
+    - "The initial template had no credential-lock cleanup, leaving packer/packer with NOPASSWD sudo and password SSH in the artifact; resolved by a final provisioner running passwd -l packer and removing /etc/ssh/sshd_config.d/50-cloud-init.conf"
+    - "The ssh_public_key variable was declared and validated but unused, and the Makefile still passed --var for it; both removed"
+    - "iso_url and iso_checksum were not aligned per packer fmt; fixed"
+    - "Verification infrastructure: plain -nic user gave the guest an e1000 NIC that the genericcloud kernel has no driver for; fixed with model=virtio-net-pci"
+  completed:
+    - "Wrote qemu/hello-tmp-trixie/main.pkr.hcl, user-data, meta-data and Makefile building output-hello-tmp-trixie/packer-debian13 from Debian 13 genericcloud 20261001-2618, pinned by SHA512 (checksum confirmed against the dated SHA512SUMS)"
+    - "packer validate and packer fmt -check pass on the final template"
+    - "Built the template twice independently; both build logs showed findmnt reporting /tmp as tmpfs before Hello, World!; artifacts were 1349517312 and 1343094784 bytes"
+    - "Booted the first build's artifact with -snapshot and the iid-verify-01 seed: /tmp tmpfs, on-disk /tmp after umount holding only . and .. with mtime Oct 1 04:57, tree v2.2.1, packer locked (L), sshd_config.d empty, passwordauthentication no"
+    - "Booted the second build's artifact the same way with identical results on every check"
+  not_completed:
+    - "Offline inspection of a Debian 12 qcow2 with debugfs, suggested by the plan agent to settle the predecessor's open question, was not attempted"
+  open_questions: —
+  notes:
+    - "Debian 13 genericcloud amd64 base from the dated directory 20261001-2618 (debian_version 13.7, systemd 257.13-1~deb13u1); qemu plugin pinned to 1.1.7"
+    - "Verification seed and throwaway ed25519 key lived under .tmp/verify-trixie/"
+    - "The Makefile keeps a login target using packer password SSH, which cannot work against the locked artifact"

@@ -17,3 +17,6 @@
 - "upload-file-with-file-provisioner"
 - "install-root-owned-file-from-staging"
 - "verify-with-new-instance-seed"
+- "add-build-log-diagnostic"
+- "inspect-directory-under-mount"
+- "use-directory-mtime-as-evidence"

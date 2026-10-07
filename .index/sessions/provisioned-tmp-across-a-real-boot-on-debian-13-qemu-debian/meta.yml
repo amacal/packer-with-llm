@@ -1,0 +1,5 @@
+title: "Provisioned /tmp Across a Real Boot on Debian 13 (qemu, debian)"
+kind: implementation
+target: qemu
+file: qemu/hello-tmp-trixie/
+date: "2026-10-07"

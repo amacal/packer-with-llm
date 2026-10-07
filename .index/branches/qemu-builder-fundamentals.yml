@@ -3,7 +3,8 @@ sessions:
   - "Provisioned /tmp Persistence Across a Real Boot (qemu, debian)"
   - "Agent-Supplied SSH Key via an Input Variable (qemu, debian)"
   - "Owned sshd Drop-in for Password Policy (qemu, debian)"
+  - "Provisioned /tmp Across a Real Boot on Debian 13 (qemu, debian)"
 frontier:
   - "Owned sshd Drop-in for Password Policy (qemu, debian)"
-explicit_future_targets:
   - "Provisioned /tmp Across a Real Boot on Debian 13 (qemu, debian)"
+explicit_future_targets: —

@@ -1,0 +1,7 @@
+- "pin-base-image-checksum"
+- "add-build-log-diagnostic"
+- "inspect-directory-under-mount"
+- "use-directory-mtime-as-evidence"
+- "lock-build-credentials"
+- "verify-with-new-instance-seed"
+- "boot-qcow2-for-verification"

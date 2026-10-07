@@ -1,0 +1,1 @@
+Built a Debian 13 genericcloud qcow2 with the qemu builder and verified across two builds that /tmp/hello.txt never reaches the disk, because the vendor-enabled tmp.mount puts /tmp on tmpfs during the build boot, confirmed by unmounting /tmp on the booted artifact and finding the on-disk directory empty with the base image's mtime

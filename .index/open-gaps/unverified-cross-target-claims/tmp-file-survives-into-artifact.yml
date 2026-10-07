@@ -1,8 +1,9 @@
 claim: "A file written to /tmp by a shell provisioner is present in the final artifact"
-status: "confirmed on docker (ubuntu:24.04 and rockylinux:9) across independent builds; on qemu/debian 12 the file is absent after the artifact's first standalone boot (deleted by systemd-tmpfiles 'D /tmp' with --remove), verified across 2 independent builds; its presence inside the qcow2 before first boot is inferred but not directly observed (no offline inspection available)"
+status: "confirmed on docker (ubuntu:24.04 and rockylinux:9) across independent builds; on qemu/debian 12 the file is absent after the artifact's first standalone boot (deleted by systemd-tmpfiles 'D /tmp' with --remove), verified across 2 independent builds, its presence inside the qcow2 before first boot inferred but not directly observed; on qemu/debian 13 the file never reaches the qcow2 (tmp.mount puts /tmp on tmpfs during the build boot), verified across 2 independent builds by unmounting /tmp on the booted artifact and finding the on-disk directory empty with the base image's mtime"
 evidence:
   - ".history/2026-10/2026-10-05-first-docker-image-with-a-shell-provisioner-docker-debian.yml completed"
   - ".history/2026-10/2026-10-05-first-docker-image-with-a-shell-provisioner-docker-debian.yml open_questions"
   - ".history/2026-10/2026-10-05-one-shell-provisioner-across-debian-and-rhel-bases-docker-debian-rhel.yml completed"
   - ".history/2026-10/2026-10-05-provisioned-tmp-persistence-across-a-real-boot-qemu-debian.yml completed"
   - ".history/2026-10/2026-10-05-provisioned-tmp-persistence-across-a-real-boot-qemu-debian.yml open_questions"
+  - ".history/2026-10/2026-10-07-provisioned-tmp-across-a-real-boot-on-debian-13-qemu-debian.yml completed"

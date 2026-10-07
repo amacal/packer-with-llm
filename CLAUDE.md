@@ -276,7 +276,10 @@ inside a single title.
   command that boots or runs the artifact for checking — is Claude's job,
   not yours: Claude creates it under `.tmp/` (never in a tracked path) and
   prints every file's content and every command in chat so you see exactly
-  what it does, one piece at a time. What the check must prove, and
+  what it does, one piece at a time. A verification boot gives the guest
+  the same virtio disk and NIC the qemu builder used, since cloud-image
+  kernels ship only virtio drivers and QEMU's default emulated devices
+  would leave the artifact unreachable. What the check must prove, and
   interpreting what it shows, stays Socratic and yours (see "Build
   verification discipline").
 - Each exercise has a companion notes file at `{target-dir}/{dir}.md` (a
