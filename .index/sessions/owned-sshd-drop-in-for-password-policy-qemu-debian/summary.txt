@@ -1,0 +1,1 @@
+Replaced the qemu/debian artifact's delete-50-cloud-init.conf password policy with an owned 01-ssh-dropin.conf uploaded by the file provisioner and installed root:root 644 by a root shell step, and verified on two independent builds booted with a new-instance seed that sshd -T stays passwordauthentication no while cloud-init rewrites 50-cloud-init.conf with yes

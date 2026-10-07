@@ -1,0 +1,6 @@
+- "upload-file-with-file-provisioner"
+- "install-root-owned-file-from-staging"
+- "order-sshd-drop-ins"
+- "verify-effective-sshd-config"
+- "verify-with-new-instance-seed"
+- "count-ssh-logins-in-journal"

@@ -14,3 +14,6 @@
 - "validate-variable-input"
 - "supply-variable-at-invocation"
 - "pass-value-via-env-var-file"
+- "upload-file-with-file-provisioner"
+- "install-root-owned-file-from-staging"
+- "verify-with-new-instance-seed"
