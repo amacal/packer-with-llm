@@ -1,6 +1,0 @@
-title: "Chained Post-Processors Sequence (docker, debian)"
-status: not-completed
-mentioned_by:
-  - "Tagged Docker Image via the docker-tag Post-Processor (docker, debian)"
-evidence:
-  - ".history/2026-10/2026-10-08-tagged-docker-image-via-the-docker-tag-post-processor-docker-debian.yml not_completed: post-processors sequence block chaining a second step after docker-tag explicitly deferred"

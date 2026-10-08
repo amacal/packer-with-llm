@@ -1,6 +1,6 @@
 continuation:
   - "The first qemu session's named follow-ups (agent-supplied key, owned sshd drop-in, Debian 13 /tmp contrast) are all done; no explicit qemu future target remains"
-  - "The docker branch now has one explicit future target: a post-processors sequence chaining a second step after docker-tag, deferred from the docker-tag session"
+  - "The docker branch's one explicit future target, a post-processors sequence after docker-tag, is done; no explicit docker future target remains"
 consolidation: —
 new_branch: —
 explicit_commitment: —

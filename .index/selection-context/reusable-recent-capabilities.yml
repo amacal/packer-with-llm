@@ -21,3 +21,6 @@
 - "inspect-directory-under-mount"
 - "use-directory-mtime-as-evidence"
 - "write-docker-tag-post-processor"
+- "chain-post-processors-in-a-sequence"
+- "trace-artifact-records-through-a-chain"
+- "save-and-reload-docker-image-tar"

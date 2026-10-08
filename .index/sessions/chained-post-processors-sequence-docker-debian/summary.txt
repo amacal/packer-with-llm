@@ -1,0 +1,1 @@
+Chained docker-tag, docker-save, artifice and checksum in one post-processors sequence on a committed ubuntu:24.04 image, diagnosed a missing output directory, a checksum silently skipping a file-less record, and an appended stale checksum line, and verified the saved tar reloads as hello-tagged-chain:latest with /tmp/hello.txt and tree

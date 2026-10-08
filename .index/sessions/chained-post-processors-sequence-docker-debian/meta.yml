@@ -1,0 +1,6 @@
+title: "Chained Post-Processors Sequence (docker, debian)"
+kind: implementation
+status: demonstrated
+target: docker
+file: docker/hello-tagged-chain/
+date: "2026-10-08"

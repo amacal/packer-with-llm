@@ -1,0 +1,7 @@
+- "chain-post-processors-in-a-sequence"
+- "trace-artifact-records-through-a-chain"
+- "read-plugin-source-for-artifact-behavior"
+- "save-and-reload-docker-image-tar"
+- "checksum-a-post-processor-output-file"
+- "enforce-build-preconditions-in-makefile"
+- "verify-docker-artifact-with-run"

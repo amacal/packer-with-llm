@@ -1,0 +1,48 @@
+date: "2026-10-08"
+title: "Chained Post-Processors Sequence (docker, debian)"
+session:
+  file: docker/hello-tagged-chain/
+  status: completed
+  attempted:
+    - "Chain docker-tag, docker-save, artifice and checksum in one post-processors sequence on the committed ubuntu:24.04 image, then verify the saved tar reconstructs the named, provisioned image"
+  explored:
+    - "Read the post-processors block docs on standalone post-processor blocks versus a post-processors block and their stated equivalence"
+    - "Read docker-save's docs and its v1.1.4 source: the BuilderId type check, os.Create for the output file, and the returned record"
+    - "Read the Packer core v1.16.1 post-processor loop in packer/build.go for the error path"
+    - "Read checksum's source (Files() iteration, O_APPEND output, Config fields) and docker ImportArtifact.Files()"
+    - "Read artifice's docs and source (BuilderId, NewArtifact glob and stat)"
+    - "Discussed whether returned-record behavior is found in docs or in source; noted docker-save's keep_input_artifact doc text does not match its code"
+    - "Discussed where outputs should go given git add -A at close; confirmed with git check-ignore that the .tmp pattern matches docker/hello-tagged-chain/.tmp/"
+  tried:
+    - "Ran docker-tag then docker-save with path .tmp/hello-tagged-chain.tar before .tmp/ existed"
+    - "Added mkdir -p .tmp to the Makefile build target"
+    - "Added checksum directly after docker-save, without artifice"
+    - "Inserted artifice between docker-save and checksum"
+    - "Ran a second build without removing the previous checksum file"
+    - "Ran make clean build sha256 with clean typed manually, then made build depend on clean"
+  corrections:
+    - "Concluded docker-save rejects the docker-tag record; tracing the && condition with BuilderId packer.post-processor.docker-tag showed it is accepted"
+    - "Predicted docker-save would succeed writing into the missing .tmp/ directory; observed 'Error creating output file: open .tmp/hello-tagged-chain.tar: no such file or directory'. The prediction assumed the writer creates parent directories"
+    - "Predicted the docker-tag tag would be reverted after docker-save failed; observed hello-tagged-chain:latest (8e6c0f2eb50b) still present while the summary said no artifacts were created"
+    - "Predicted checksum placed directly after docker-save would checksum the tar; observed no checksum file and no error"
+    - "Predicted a second build would overwrite the checksum file; observed two lines, 54b82a1c... (previous tar) and a29441a7... (current tar)"
+  bugs_found:
+    - "docker-save failed because .tmp/ did not exist; resolved with mkdir -p .tmp in the Makefile build target"
+    - "Checksum file accumulated a stale line per build; resolved by making the Makefile build target depend on clean (rm -rf .tmp)"
+    - "Interim fix relied on the caller typing make clean before build; resolved by the build: clean prerequisite"
+  completed:
+    - "Wrote docker/hello-tagged-chain/main.pkr.hcl (docker plugin pinned 1.1.4, docker.ubuntu2404 with commit = true, inline shell provisioner, post-processors sequence docker-tag repository hello-tagged-chain tags [\"latest\"] -> docker-save path .tmp/hello-tagged-chain.tar -> artifice files [.tmp/hello-tagged-chain.tar] -> checksum sha256 output .tmp/hello-tagged-chain.tar.sha256) plus a Makefile with build: clean, sha256, load and run targets"
+    - "packer validate and packer fmt -check both pass on the final template"
+    - "Docker-tag plus docker-save build (image 5c1a9925...) showed three summary lines: builder image ID and the tag record twice; tar written to .tmp/ (135925248 bytes)"
+    - "Final-template build 1 via make build (image bb3ec53c...): checksum file one line 995d05c7..., sha256sum -c OK"
+    - "Final-template build 2 via make build (image 5b04b056...): checksum file one line 56a320fe..., sha256sum -c OK; summary listed five artifacts"
+    - "Verified the build 2 tar: docker rmi hello-tagged-chain:latest deleted 5b04b056...; the tar's manifest.json RepoTags was [\"hello-tagged-chain:latest\"]; docker load printed 'Loaded image: hello-tagged-chain:latest' with ID 5b04b056f4a4; docker run printed Hello, World! and tree v2.1.1, exit 0"
+  not_completed:
+    - "keep_input_artifact = false within the chain was not run (only read in source)"
+    - "A standalone docker-save receiving the builder record was not run, so the inferred empty RepoTags was not observed"
+    - "The compress post-processor was not tried"
+  open_questions: —
+  notes:
+    - "Packer v1.16.1, docker plugin v1.1.4"
+    - "docker-tag was reused 12 days before its pending retention check (due 2026-10-20)"
+    - "Verification commands were run by Claude; outputs were kept under docker/hello-tagged-chain/.tmp/, which is gitignored"
