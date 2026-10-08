@@ -1,0 +1,5 @@
+- "write-docker-tag-post-processor"
+- "inspect-image-tags"
+- "verify-docker-artifact-with-run"
+- "diagnose-post-processor-artifact-type"
+- "validate-and-fmt-template"

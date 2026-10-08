@@ -1,5 +1,6 @@
 title: "First Docker Image with a Shell Provisioner (docker, debian)"
 kind: implementation
+status: demonstrated
 target: docker
 file: docker/hello-image/
 date: "2026-10-05"

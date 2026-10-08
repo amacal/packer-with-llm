@@ -1,0 +1,43 @@
+date: "2026-10-08"
+title: "Tagged Docker Image via the docker-tag Post-Processor (docker, debian)"
+session:
+  file: docker/hello-tagged/
+  status: completed
+  attempted:
+    - "Name the committed ubuntu:24.04 image from the docker builder with a docker-tag post-processor, then verify the tag, its movement across two builds, and the image contents by running it by name"
+  explored:
+    - "Distinguished a Docker image ID from a repository:tag name, and whether docker tag creates a new image or ID"
+    - "Reasoned why tagging must follow the commit (a container has no image ID to point at)"
+    - "Discussed why a post-processor block belongs in build rather than source, and that docker-tag's committed-artifact requirement is a constraint on input type the block position does not express"
+    - "Compared the two artifact lines in the build summary against docker images and docker image inspect"
+    - "Read the docker-tag docs on keep_input_artifact having no effect, and discussed the plugin interface's keep/override flags"
+    - "Ran an export_path variant to test docker-tag's precondition, and discussed why Packer removes a failed build's artifacts"
+    - "Discussed the fixed latest tag against image immutability"
+    - "Read the post-processors (sequence) block docs and its official shell-local/artifice/checksum example"
+  tried:
+    - "Wrote the post-processor with the singular tag = [\"latest\"]; validate passed on plugin 1.1.4, then changed to tags"
+    - "Ran packer build twice on the final template"
+    - "Temporarily replaced commit = true with commit = false and export_path = \"image.tar\" and built once, then reverted"
+  corrections:
+    - "Described the build log's sha256 value as something to use as a label/tag; restated as the IMAGE ID column value, with REPOSITORY and TAG showing <none>"
+    - "Described the failed export run's removed output as partial artifacts; restated as a complete builder output removed because the pipeline did not reach its last declared stage"
+    - "Stated that docker-tag checks whether the source was docker; corrected to the artifact type, since the same docker source passed with commit = true and failed with export_path"
+    - "Stated that running the image by name proved the tag moved to the new ID; restated that docker images/inspect showed the move, while docker run proved the image behind the tag contains /tmp/hello.txt and tree"
+    - "Described docker-tag's output step as printing the tag; restated as returning a new artifact record, which is why the summary lists two artifacts"
+  bugs_found:
+    - "Post-processor used the deprecated singular tag argument, accepted silently by packer validate on docker plugin 1.1.4; resolved by renaming to tags per the current docs"
+  completed:
+    - "Wrote docker/hello-tagged/main.pkr.hcl (docker plugin pinned 1.1.4, source docker.ubuntu2404 with commit = true, inline shell provisioner, post-processor docker-tag with repository hello-tagged and tags [\"latest\"]) plus a Makefile"
+    - "packer validate and packer fmt -check both pass on the final template"
+    - "Build 1 committed sha256:af7877a23842... and tagged it hello-tagged:latest; docker images showed one row and inspect showed RepoTags [hello-tagged:latest]"
+    - "Build 2 committed 1cc1271c4072 and moved hello-tagged:latest to it; inspect of af7877a23842 showed RepoTags [] (dangling, not deleted)"
+    - "Verified the image hello-tagged:latest pointed at after build 2 with docker run --rm hello-tagged:latest sh -c 'cat /tmp/hello.txt && tree --version': Hello, World! and tree v2.1.1, exit 0"
+    - "Export variant failed with 'Post-processor failed: Unknown artifact type: packer.docker / Can only tag from Docker builder artifacts' and 'no artifacts were created'; no image.tar remained in the directory afterwards"
+  not_completed:
+    - "A post-processors (sequence) block chaining a second step after docker-tag was explicitly deferred"
+  open_questions: —
+  notes:
+    - "Session started 2026-10-07 and closed 2026-10-08"
+    - "Title originally proposed as 'Tagged Docker Image via a Post-Processor Pipeline (docker, debian)'; renamed at close because chaining was deferred"
+    - "Packer v1.16.1; the docker plugin had to be reinstalled with packer init after a container rebuild"
+    - "That image.tar was written and then removed by Packer is inferred from the log reaching 'Killing the container' after export and the file being absent; the file was not observed directly"

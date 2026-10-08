@@ -1,5 +1,6 @@
 title: "Owned sshd Drop-in for Password Policy (qemu, debian)"
 kind: implementation
+status: demonstrated
 target: qemu
 file: qemu/hello-sshd-dropin/
 date: "2026-10-07"

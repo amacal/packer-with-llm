@@ -1,0 +1,8 @@
+- "post-processors"
+- "docker-tag-post-processor"
+- "docker-builder"
+- "packer-artifacts"
+- "keep-input-artifact"
+- "build-failure-cleanup"
+- "build-verification"
+- "packer-validate-and-fmt"

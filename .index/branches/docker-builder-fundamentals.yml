@@ -2,6 +2,9 @@ title: "Docker Builder Fundamentals"
 sessions:
   - "First Docker Image with a Shell Provisioner (docker, debian)"
   - "One Shell Provisioner Across Debian and RHEL Bases (docker, debian+rhel)"
+  - "Tagged Docker Image via the docker-tag Post-Processor (docker, debian)"
 frontier:
   - "One Shell Provisioner Across Debian and RHEL Bases (docker, debian+rhel)"
-explicit_future_targets: —
+  - "Tagged Docker Image via the docker-tag Post-Processor (docker, debian)"
+explicit_future_targets:
+  - "Chained Post-Processors Sequence (docker, debian)"

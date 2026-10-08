@@ -1,5 +1,6 @@
 title: "One Shell Provisioner Across Debian and RHEL Bases (docker, debian+rhel)"
 kind: implementation
+status: demonstrated
 target: docker
 file: docker/hello-multi-os/
 date: "2026-10-05"

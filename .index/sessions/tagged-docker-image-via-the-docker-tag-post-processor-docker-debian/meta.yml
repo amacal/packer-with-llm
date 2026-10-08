@@ -1,0 +1,6 @@
+title: "Tagged Docker Image via the docker-tag Post-Processor (docker, debian)"
+kind: implementation
+status: demonstrated
+target: docker
+file: docker/hello-tagged/
+date: "2026-10-08"

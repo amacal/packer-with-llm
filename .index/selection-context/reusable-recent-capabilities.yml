@@ -20,3 +20,4 @@
 - "add-build-log-diagnostic"
 - "inspect-directory-under-mount"
 - "use-directory-mtime-as-evidence"
+- "write-docker-tag-post-processor"

@@ -1,0 +1,1 @@
+Named the committed ubuntu:24.04 image hello-tagged:latest with a docker-tag post-processor, observed the tag move to the second build's image while the first became dangling, verified the tagged image by running it by name, and showed docker-tag rejecting an export_path artifact
