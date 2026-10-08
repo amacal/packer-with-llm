@@ -236,6 +236,7 @@ validation:
     - "no future-targets/<slug>.yml title is also a sessions/*/meta.yml title (a target must be deleted the moment it graduates)"
     - "every branches/*.yml's sessions and frontier entries resolve to a real sessions/*/meta.yml title"
     - "every concepts.yml/capabilities.yml tag matches ^[a-z0-9]+(-[a-z0-9]+)*$"
+    - "every sessions/*/meta.yml contains exactly the fields in meta.yml's current fields_in_order, in that order — none missing, none extra; a field added to fields_in_order is backfilled into every existing meta.yml in the same change that adds it, so an older session never silently lacks it"
     - "meta.yml's target field is one of qemu | docker | amazon-ebs | hcloud, and matches the target implied by the file field's directory prefix"
     - "meta.yml's status field is exactly demonstrated or retained; retained only ever set as the direct result of a cold-runs/<slug>.yml resolving to status: passed for that exact title"
     - "every cold-runs/<slug>.yml's concept field resolves to a real sessions/*/meta.yml title"
