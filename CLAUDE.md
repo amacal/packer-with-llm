@@ -61,10 +61,13 @@ base ISO or base image directly, the same way a real Packer project works.
   listing only the exact fields/arguments the current step needs — never
   the full page, never composed template content. The excerpt is quoted
   verbatim from what was actually fetched that moment, never reworded or
-  invented from memory; any explanation goes outside the quote. This
-  depends on live internet access during the session — unlike Ansible's
-  `ansible-doc`, Packer ships no bundled offline doc tool, so if the fetch
-  fails, say so rather than filling the gap from memory.
+  invented from memory; any explanation goes outside the quote. The quote
+  comes from the raw page itself (`curl` plus tag-stripping with `sed`),
+  never from `WebFetch`, whose output is a model's summary of the page
+  rather than its actual text. This depends on live internet access during
+  the session — unlike Ansible's `ansible-doc`, Packer ships no bundled
+  offline doc tool, so if the fetch fails, say so rather than filling the
+  gap from memory.
 - When new syntax comes up (an HCL2 construct like `dynamic`/`for_each`, a
   new block type, a file layout), or something is suggested whose shape
   matters, show it as a concrete HCL2 example rather than describing it in
