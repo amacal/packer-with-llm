@@ -361,7 +361,11 @@ this repo's own sessions only (see "Fast index").
   what it does, one piece at a time. A verification boot gives the guest
   the same virtio disk and NIC the qemu builder used, since cloud-image
   kernels ship only virtio drivers and QEMU's default emulated devices
-  would leave the artifact unreachable. What the check must prove, and
+  would leave the artifact unreachable. A verification VM runs as a
+  background job, which the harness stops after at most two hours; if it
+  stops while waiting on you, Claude says so and boots it again on your
+  next reply rather than restarting it unattended — it runs with
+  `-snapshot`, so nothing is lost. What the check must prove, and
   interpreting what it shows, stays Socratic and yours (see "Build
   verification discipline").
 - Each exercise has a companion notes file at `{target-dir}/{dir}.md` (a
@@ -812,10 +816,12 @@ Two sequential agent calls:
 Once the verify agent finishes: remove any artifact the sitting's builds
 produced that doesn't need to persist (a local qcow2/Docker image used only
 to verify the build, not the template that produced it) and clear `.tmp/` —
-the only point in the sitting these may be removed.
+the only point in the sitting these may be removed. Packer's default
+`output-*/` directories are also gitignored, so a multi-gigabyte image
+missed here still never reaches a commit.
 
 Then commit, locally, the same way every session: `git add -A` (gitignored
-paths — `.tmp/`, `.claude/settings.local.json` — are already
+paths — `.tmp/`, `output-*/`, `.claude/settings.local.json` — are already
 excluded) then `git commit -m "Close session: <Concept Title>"`. Never
 `git push` — publishing anywhere beyond the local repository is your manual
 decision.
