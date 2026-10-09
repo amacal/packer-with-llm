@@ -1,0 +1,6 @@
+title: "Sensitive Build Credential via an Environment Variable (qemu, debian)"
+kind: implementation
+status: demonstrated
+target: qemu
+file: qemu/hello-sensitive-pass/
+date: "2026-10-09"

@@ -1,0 +1,8 @@
+#cloud-config
+ssh_pwauth: true
+users:
+  - name: "${provisioner_username}"
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    plain_text_passwd: "${provisioner_password}"
+    lock_passwd: false

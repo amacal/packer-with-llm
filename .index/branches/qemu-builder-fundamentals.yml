@@ -4,7 +4,8 @@ sessions:
   - "Agent-Supplied SSH Key via an Input Variable (qemu, debian)"
   - "Owned sshd Drop-in for Password Policy (qemu, debian)"
   - "Provisioned /tmp Across a Real Boot on Debian 13 (qemu, debian)"
+  - "Sensitive Build Credential via an Environment Variable (qemu, debian)"
 frontier:
-  - "Owned sshd Drop-in for Password Policy (qemu, debian)"
   - "Provisioned /tmp Across a Real Boot on Debian 13 (qemu, debian)"
+  - "Sensitive Build Credential via an Environment Variable (qemu, debian)"
 explicit_future_targets: —
