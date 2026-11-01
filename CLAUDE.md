@@ -178,7 +178,8 @@ There is no dedicated retention-check session or task of any kind — no
 extra `kind`, no standalone sitting, nothing scheduled onto the calendar as
 its own event. A pending check is only ever resolved by organic evidence:
 whenever closing any later session finds that session's own
-`uses_concepts.yml` naming a concept with a pending cold-run, and that
+`prerequisites.yml` or `uses_concepts.yml` naming a concept with a pending
+cold-run, and that
 session applied it correctly and unaided — no hint needed, nothing in its
 own `corrections`/`bugs_found` tied to it — that use *is* the retention
 check, passed. Resolve the cold-run right there, as a small direct edit
@@ -831,7 +832,8 @@ script** (see "Fast index (`.index/`)"): `Write` the new session's
 directory, `Write`/`rm` any future-target files it affects, `Edit` a branch
 file only if this session extends or opens it, revise an older session's
 fields only when specifically warranted — and, if this session's own
-`uses_concepts.yml` names a concept with a pending retention check, credit
+`prerequisites.yml` or `uses_concepts.yml` names a concept with a pending
+retention check, credit
 or fail that organic evidence in the same pass (see "Retention checks").
 
 Two sequential agent calls:
