@@ -1,0 +1,6 @@
+title: "Checksum and Compress Post-Processors on a Disk Image (qemu, debian)"
+kind: implementation
+status: demonstrated
+target: qemu
+file: qemu/hello-qcow2-chain/
+date: "2026-11-01"

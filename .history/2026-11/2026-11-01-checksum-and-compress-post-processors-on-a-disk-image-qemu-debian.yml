@@ -1,0 +1,51 @@
+date: "2026-11-01"
+title: "Checksum and Compress Post-Processors on a Disk Image (qemu, debian)"
+session:
+  file: qemu/hello-qcow2-chain/
+  status: completed
+  attempted:
+    - "Build a Debian 13 genericcloud qcow2 with the qemu builder and pass it through a post-processors sequence of compress then checksum, then verify the checksum, extract the archive and boot the extracted disk"
+  explored:
+    - "Recapped from the docker chain session what a post-processor step receives from the previous one and which part of it checksum reads"
+    - "Fetched the artifice docs page (curl plus sed) for its files field, and the compress docs page for output, compression_level, keep_input_artifact and supported formats"
+    - "Discussed where compress writes its archive relative to output-<name>/ and what keep_input_artifact = false does to the qcow2"
+    - "Discussed why the extracted archive, not the original qcow2, is the disk to boot for verification"
+    - "Discussed ordering compress before checksum from what a downloader verifies"
+    - "Read compress's source at Packer v1.16.2 (os.MkdirAll before os.Create; returns newArtifact, false, false, nil)"
+    - "Discussed which observations separately show the packer account lock and sshd's effective password-authentication setting"
+    - "Discussed the post-processor chain versus a Makefile tar and sha512sum line"
+  tried:
+    - "Wrote the template by adapting qemu/hello-tmp-trixie/ files, initially with no post-processors"
+    - "Added a checksum step alone, then compress (.tmp/trixie13.tar.gz, keep_input_artifact = false) before checksum (sha512, .tmp/trixie13.tar.gz.sha512) in one post-processors block"
+    - "Build 1 with no prior outputs"
+    - "Build 2 via make build with build: clean and mkdir -p .tmp in the Makefile"
+    - "Build 3 with the clean prerequisite removed, leaving the previous .tmp/ files in place"
+    - "Build 4 with build: clean restored and without mkdir -p .tmp"
+  corrections:
+    - "Recalled checksum as using the image ID to stream the image content; corrected to checksum iterating only the file list in the record it receives, which for the docker builder's image record is empty"
+    - "Predicted the qemu builder's record would list no files, like docker's; corrected by reasoning that the builder has a disk file to report, then confirmed by the archive's single member being packer-debian13"
+    - "Predicted the archive would be about 1.4 GiB, then revised to about 400-500 MB; observed 449066420 bytes on build 1"
+    - "Predicted a rebuild without cleanup would overwrite both .tmp/ files; observed the archive overwritten but the .sha512 file appended to two lines, with sha512sum -c reporting one FAILED, one OK, exit 1"
+    - "Predicted compress would fail writing into a missing .tmp/ (generalized from docker-save in the docker chain session); observed compress created .tmp/ itself"
+    - "Stated that a refused packer/packer SSH login proves both the passwd -l lock and the sshd setting; corrected: password authentication off alone refuses any password, so the lock needs its own check"
+    - "Proposed checking the lock with sudo su packer; corrected: su run by root asks for no password, so the check must run as an ordinary user"
+  bugs_found:
+    - "Makefile clean target removed output-hello-tmp-trixie (carried over from the earlier exercise) instead of output-qcow2-chain; fixed by the user"
+    - "build block was missing its closing brace; fixed before packer validate"
+  completed:
+    - "Wrote qemu/hello-qcow2-chain/ (main.pkr.hcl with qemu plugin 1.1.7, source qemu.debian13 on debian-13-genericcloud-amd64-20261026-2643, shell provisioners installing tree, locking packer and removing 50-cloud-init.conf, post-processors compress then checksum; user-data, meta-data, Makefile with build: clean)"
+    - "packer validate and packer fmt -check pass on the final template"
+    - "Build 1: output-qcow2-chain/ absent afterwards; archive 449066420 bytes with single member packer-debian13 (1345847296 bytes); .sha512 one line"
+    - "Build 2: archive 452099680 bytes; .sha512 one line matching sha512sum of the archive"
+    - "Build 3: archive 449109095 bytes; .sha512 two lines; checksum record in the summary listed only the archive"
+    - "Build 4: compress created the missing .tmp/; archive 452209596 bytes; .sha512 one line"
+    - "Verified the build 4 archive: sha512sum -c OK; extracted qcow2 40 GiB virtual, 1.26 GiB on disk; booted with -snapshot and an iid-verify-01 key-only verify seed: tree v2.2.1; su packer as verify with password packer gave su: Authentication failure, exit 1; sudo sshd -T gave passwordauthentication no and kbdinteractiveauthentication no; sshd_config.d empty; SSH as packer with pubkey disabled gave Permission denied (publickey)"
+  not_completed:
+    - "keep_input_artifact = true was not tried"
+    - "Predicted the qcow2 would stay untouched if compress failed as the first step of the sequence; not tested, because build 4 succeeded"
+    - "The sensitive-variable build credential pattern was not used; the template carries a literal throwaway password"
+  open_questions: —
+  notes:
+    - "main.pkr.hcl, user-data, meta-data and Makefile are near-verbatim reuse of the user's own qemu/hello-tmp-trixie/ files (newer image URL and checksum, names changed, findmnt and hello.txt lines dropped)"
+    - "Packer v1.16.2, qemu plugin 1.1.7"
+    - "Verification commands and the verification seed were run and written by Claude under the repo's .tmp/verify/"

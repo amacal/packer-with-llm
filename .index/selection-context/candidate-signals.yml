@@ -1,6 +1,7 @@
 continuation:
   - "The first qemu session's named follow-ups (agent-supplied key, owned sshd drop-in, Debian 13 /tmp contrast) are all done; no explicit qemu future target remains"
   - "The docker branch's one explicit future target, a post-processors sequence after docker-tag, is done; no explicit docker future target remains"
+  - "The retention check for Chained Post-Processors Sequence (docker, debian) failed on 2026-11-01 (record file list and checksum append behaviour); a later exercise that relies on post-processor records is a priority candidate"
 consolidation: —
 new_branch: —
 explicit_commitment: —

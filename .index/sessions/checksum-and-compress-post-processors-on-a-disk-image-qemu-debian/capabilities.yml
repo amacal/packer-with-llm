@@ -1,0 +1,7 @@
+- "compress-disk-image-artifact"
+- "order-post-processors-for-distribution"
+- "trace-artifact-records-through-a-chain"
+- "read-plugin-source-for-artifact-behavior"
+- "verify-archive-checksum-and-boot-extracted-disk"
+- "check-account-lock-separately-from-sshd"
+- "enforce-build-preconditions-in-makefile"

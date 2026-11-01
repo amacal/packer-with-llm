@@ -1,5 +1,4 @@
 concept: "Chained Post-Processors Sequence (docker, debian)"
 due_date: "2026-10-22"
-status: pending
-task: —
-result: —
+status: failed
+result: "Failed in Checksum and Compress Post-Processors on a Disk Image (qemu, debian) on 2026-11-01: that checksum iterates the received record's file list (empty for a docker image record) was recovered only after several hints and a correction, and a rebuild without cleanup was predicted to overwrite the checksum file where it appends; the post-processors block placement was written correctly unaided"

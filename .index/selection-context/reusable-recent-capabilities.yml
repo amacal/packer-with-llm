@@ -28,3 +28,7 @@
 - "render-seed-with-templatefile"
 - "remove-build-user-in-shutdown-command"
 - "search-artifact-for-secret"
+- "compress-disk-image-artifact"
+- "order-post-processors-for-distribution"
+- "verify-archive-checksum-and-boot-extracted-disk"
+- "check-account-lock-separately-from-sshd"

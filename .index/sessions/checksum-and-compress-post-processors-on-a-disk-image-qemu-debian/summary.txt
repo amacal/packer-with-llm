@@ -1,0 +1,1 @@
+Passed a Debian 13 qemu qcow2 through a compress then checksum post-processors sequence with keep_input_artifact = false, observed the builder's record listing the disk so no artifice was needed, compress creating its parent directory and checksum appending a stale line without cleanup, and verified the extracted archive boots with tree installed and the packer account unusable
